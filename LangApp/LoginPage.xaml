@@ -5,15 +5,50 @@
              Title="Login"
              BackgroundColor="White">
 
-    <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+    <ScrollView>
+        <StackLayout Padding="30" Spacing="20" VerticalOptions="Center">
 
-        <Label Text="Welcome Back!" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <!-- Title -->
+            <Label Text="Login"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
 
-        <Entry x:Name="usernameEntry" Placeholder="Username"/>
-        <Entry x:Name="passwordEntry" Placeholder="Password" IsPassword="True"/>
+            <!-- Username Entry -->
+            <Entry x:Name="usernameEntry"
+                   Placeholder="Username"
+                   Keyboard="Default"
+                   TextColor="Black"
+                   BackgroundColor="#f0f0f0"
+                   HeightRequest="50"
+                   HorizontalOptions="FillAndExpand"/>
 
-        <Button Text="Login" Clicked="OnLoginClicked"/>
-        <Button Text="Sign Up" Clicked="OnGoToSignUpClicked"/>
-    </VerticalStackLayout>
+            <!-- Password Entry -->
+            <Entry x:Name="passwordEntry"
+                   Placeholder="Password"
+                   IsPassword="True"
+                   TextColor="Black"
+                   BackgroundColor="#f0f0f0"
+                   HeightRequest="50"
+                   HorizontalOptions="FillAndExpand"/>
+
+            <!-- Login Button -->
+            <Button x:Name="loginButton"
+                    Text="Login"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Clicked="OnLoginClicked"/>
+
+            <!-- Go to SignUp Button -->
+            <Button Text="Create Account"
+                    BackgroundColor="#cccccc"
+                    TextColor="Black"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Clicked="OnGoToSignUpClicked"/>
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>
-

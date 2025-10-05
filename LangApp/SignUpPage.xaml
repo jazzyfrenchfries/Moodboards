@@ -5,14 +5,45 @@
              Title="Sign Up"
              BackgroundColor="White">
 
-    <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+    <ScrollView>
+        <StackLayout Padding="30" Spacing="20" VerticalOptions="Center">
 
-        <Label Text="Create Account" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+            <Label Text="Create an Account"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
 
-        <Entry x:Name="usernameEntry" Placeholder="Username"/>
-        <Entry x:Name="passwordEntry" Placeholder="Password" IsPassword="True"/>
+            <Entry x:Name="usernameEntry"
+                   Placeholder="Username"
+                   Keyboard="Default"
+                   TextColor="Black"
+                   BackgroundColor="#f0f0f0"
+                   HeightRequest="50"
+                   HorizontalOptions="FillAndExpand"/>
 
-        <Button Text="Sign Up" Clicked="OnSignUpClicked"/>
-        <Button Text="Go Back" Clicked="OnGoBackClicked"/>
-    </VerticalStackLayout>
+            <Entry x:Name="passwordEntry"
+                   Placeholder="Password"
+                   IsPassword="True"
+                   TextColor="Black"
+                   BackgroundColor="#f0f0f0"
+                   HeightRequest="50"
+                   HorizontalOptions="FillAndExpand"/>
+
+            <Button x:Name="signUpButton"
+                    Text="Sign Up"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Clicked="OnSignUpClicked"/>
+
+            <Button x:Name="goBackButton"
+                    Text="Go Back"
+                    BackgroundColor="#cccccc"
+                    TextColor="Black"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    Clicked="OnGoBackClicked"/>
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

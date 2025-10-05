@@ -1,5 +1,10 @@
-namespace LangApp;
+using System;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
+
+namespace LangApp;
 
 public partial class SignUpPage : ContentPage
 {
@@ -9,8 +14,40 @@ public partial class SignUpPage : ContentPage
     {
         InitializeComponent();
 
-        // Point this to your API base URL
-        _httpClient = new HttpClient { BaseAddress = new Uri("http://172.16.98.232:5000/") };
+        // For Mac app, just use localhost
+        string apiBaseUrl = "http://127.0.0.1:5284/";
+
+        _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri(apiBaseUrl),
+            Timeout = TimeSpan.FromSeconds(30)
+        };
+
+        // Disable signup until backend is healthy
+        signUpButton.IsEnabled = false;
+
+        this.Appearing += async (s, e) => await CheckBackendHealthAsync();
+    }
+
+    private async Task CheckBackendHealthAsync()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/health");
+
+            if (response.IsSuccessStatusCode)
+            {
+                signUpButton.IsEnabled = true;
+            }
+            else
+            {
+                await DisplayAlert("Warning", "Backend is not responding correctly.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Cannot reach backend: {ex.Message}", "OK");
+        }
     }
 
     private async void OnSignUpClicked(object sender, EventArgs e)
@@ -49,6 +86,10 @@ public partial class SignUpPage : ContentPage
                 string error = await response.Content.ReadAsStringAsync();
                 await DisplayAlert("Error", $"Signup failed: {error}", "OK");
             }
+        }
+        catch (TaskCanceledException)
+        {
+            await DisplayAlert("Error", "Request timed out. Please check your network and try again.", "OK");
         }
         catch (Exception ex)
         {
