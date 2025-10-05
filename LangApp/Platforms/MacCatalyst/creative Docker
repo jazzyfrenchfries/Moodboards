@@ -1,0 +1,17 @@
+-- Create a new database
+CREATE DATABASE LangAppDB;
+GO
+
+-- Switch to the new database
+USE LangAppDB;
+GO
+
+-- Create the Users table
+CREATE TABLE Users (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) NOT NULL,
+    PasswordHash NVARCHAR(255) NOT NULL
+);
+GO
+SELECT name FROM sys.databases;
+GO

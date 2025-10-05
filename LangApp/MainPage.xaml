@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LangApp.MainPage"
+             BackgroundColor="#FF217B9E">
+
+    <Grid ColumnDefinitions="220, *" RowDefinitions="*">
+        <!-- Left panel: controls & thumbnails -->
+        <VerticalStackLayout Grid.Column="0" Padding="15" Spacing="15" BackgroundColor="#f5f5f5">
+            <Button Text="Login" Clicked="Login"/>
+            <Button Text="Register" Clicked="Register"/>
+            <Button Text="Pick + Upload Images" Clicked="OnUploadFilesClicked"/>
+            <Button Text="Enable Move" Clicked="OnEnableMoveClicked"/>
+
+            <Label Text="Select an Image to Focus:" FontAttributes="Bold"/>
+
+            <CollectionView x:Name="imageList" SelectionMode="Single" SelectionChanged="OnThumbnailSelected" HeightRequest="400">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="5" ColumnDefinitions="50, *">
+                            <Image Source="{Binding Thumbnail}" WidthRequest="40" HeightRequest="40" Aspect="AspectFill"/>
+                            
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <VerticalStackLayout Spacing="10">
+                <Button Text="Bring Forward" Clicked="OnBringForwardClicked"/>
+                <Button Text="Send Backward" Clicked="OnSendBackwardClicked"/>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+
+        <!-- Right panel: image canvas -->
+        <AbsoluteLayout x:Name="ImageLayout" Grid.Column="1" BackgroundColor="LightGray"/>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LangApp.SignUpPage"
+             Title="Sign Up"
+             BackgroundColor="White">
+
+    <VerticalStackLayout Padding="30" Spacing="15" VerticalOptions="Center">
+
+        <Label Text="Create Account" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+        <Entry x:Name="usernameEntry" Placeholder="Username"/>
+        <Entry x:Name="passwordEntry" Placeholder="Password" IsPassword="True"/>
+
+        <Button Text="Sign Up" Clicked="OnSignUpClicked"/>
+        <Button Text="Go Back" Clicked="OnGoBackClicked"/>
+    </VerticalStackLayout>
+</ContentPage>
