@@ -6,20 +6,33 @@
 
     <Grid ColumnDefinitions="220, *" RowDefinitions="*">
         <!-- Left panel: controls & thumbnails -->
-        <VerticalStackLayout Grid.Column="0" Padding="15" Spacing="15" BackgroundColor="#f5f5f5">
-            <Button Text="Login" Clicked="Login"/>
-            <Button Text="Register" Clicked="Register"/>
+        <VerticalStackLayout Grid.Column="0" Padding="15" Spacing="15" BackgroundColor="White">
+
+            <!-- Save collage -->
+            <Button Text="💾 Save Collage" 
+                    Clicked="OnSaveCollageClicked"
+                    BackgroundColor="#FF7C8EA4"
+                    TextColor="White"
+                    CornerRadius="10"
+                    HeightRequest="50"/>
+
             <Button Text="Pick + Upload Images" Clicked="OnUploadFilesClicked"/>
             <Button Text="Enable Move" Clicked="OnEnableMoveClicked"/>
 
             <Label Text="Select an Image to Focus:" FontAttributes="Bold"/>
 
-            <CollectionView x:Name="imageList" SelectionMode="Single" SelectionChanged="OnThumbnailSelected" HeightRequest="400">
+            <!-- Uploaded Images -->
+            <CollectionView x:Name="imageList" 
+                            SelectionMode="Single" 
+                            SelectionChanged="OnThumbnailSelected" 
+                            HeightRequest="250">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="5" ColumnDefinitions="50, *">
-                            <Image Source="{Binding Thumbnail}" WidthRequest="40" HeightRequest="40" Aspect="AspectFill"/>
-                            
+                            <Image Source="{Binding Thumbnail}" 
+                                   WidthRequest="40" 
+                                   HeightRequest="40" 
+                                   Aspect="AspectFill"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -29,6 +42,45 @@
                 <Button Text="Bring Forward" Clicked="OnBringForwardClicked"/>
                 <Button Text="Send Backward" Clicked="OnSendBackwardClicked"/>
             </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" BackgroundColor="Black" Margin="0,10,0,10"/>
+
+            <!-- Saved Collages Section -->
+            <Label Text="My Saved Collages"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,5"/>
+
+            <CollectionView x:Name="savedCollageList"
+                            SelectionMode="Single"
+                            SelectionChanged="OnSavedCollageSelected"
+                            HeightRequest="150">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding ImageSource}"
+                               HeightRequest="100"
+                               WidthRequest="100"
+                               Aspect="AspectFit"
+                               Margin="5"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="⟳ Refresh Collages"
+                    Clicked="OnRefreshCollagesClicked"
+                    BackgroundColor="#FF7C8EA4"
+                    TextColor="White"
+                    CornerRadius="10"
+                    HeightRequest="40"
+                    Margin="0,5,0,0"/>
+
+            <Button Text="Generate AI Mood Board" 
+                    Clicked="OnGenerateAIMoodBoardClicked"
+                    BackgroundColor="#FF5C5876"
+                    TextColor="White"
+                    CornerRadius="12"
+                    Padding="10,5" />
 
         </VerticalStackLayout>
 

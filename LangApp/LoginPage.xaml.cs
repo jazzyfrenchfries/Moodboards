@@ -1,7 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
+using System.Text.Json;
 using Microsoft.Maui.Controls;
 
 namespace LangApp;
@@ -14,93 +14,81 @@ public partial class LoginPage : ContentPage
     {
         InitializeComponent();
 
-        // Use Mac backend URL
-        string apiBaseUrl = "http://127.0.0.1:5284/";
-
         _httpClient = new HttpClient
         {
-            BaseAddress = new Uri(apiBaseUrl),
-            Timeout = TimeSpan.FromSeconds(60) // increased timeout
+            BaseAddress = new Uri("http://127.0.0.1:5284/"),
+            Timeout = TimeSpan.FromSeconds(60)
         };
-
-        // Disable login until backend is healthy
-        loginButton.IsEnabled = false;
-
-        // Run health check when page appears
-        this.Appearing += async (s, e) => await CheckBackendHealthAsync();
     }
 
-    private async Task CheckBackendHealthAsync()
+ private async void OnLoginClicked(object sender, EventArgs e)
+{
+    string username = usernameEntry.Text?.Trim() ?? "";
+    string password = passwordEntry.Text ?? "";
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
     {
-        try
-        {
-            var response = await _httpClient.GetAsync("api/health");
-            if (response.IsSuccessStatusCode)
-            {
-                loginButton.IsEnabled = true;
-            }
-            else
-            {
-                await DisplayAlert("Warning", "Backend is not responding correctly.", "OK");
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"Cannot reach backend: {ex.Message}", "OK");
-        }
+        await DisplayAlert("Error", "Please enter both username and password.", "OK");
+        return;
     }
 
-    private async void OnLoginClicked(object sender, EventArgs e)
-    {
-        string username = usernameEntry.Text?.Trim() ?? string.Empty;
-        string password = passwordEntry.Text ?? string.Empty;
+    string hashedPassword = Convert.ToBase64String(
+        System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(password))
+    );
 
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    var loginRequest = new { Username = username, PasswordHash = hashedPassword };
+
+    try
+    {
+        var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginRequest);
+
+        if (!response.IsSuccessStatusCode)
         {
-            await DisplayAlert("Error", "Please enter both a username and password.", "OK");
+            string errorText = await response.Content.ReadAsStringAsync();
+            await DisplayAlert("Login Failed", errorText, "OK");
             return;
         }
 
-        // Hash password before sending
-        string hashedPassword = Convert.ToBase64String(
-            System.Security.Cryptography.SHA256.HashData(
-                System.Text.Encoding.UTF8.GetBytes(password))
-        );
+        string jsonResponse = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(jsonResponse);
+        var root = doc.RootElement;
 
-        var loginRequest = new
-        {
-            Username = username,
-            PasswordHash = hashedPassword
-        };
+        // Check for nested "user" object or use root
+        JsonElement userElement = root.TryGetProperty("user", out var nestedUser) ? nestedUser : root;
 
-        try
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginRequest);
+        // Extract ID and username safely
+        int userId = 0;
+        string returnedUsername = "";
 
-            if (response.IsSuccessStatusCode)
-            {
-                await DisplayAlert("Success", "Login successful!", "OK");
-                await Navigation.PushAsync(new MainPage());
-            }
-            else
-            {
-                string error = await response.Content.ReadAsStringAsync();
-                await DisplayAlert("Error", $"Login failed: {error}", "OK");
-            }
-        }
-        catch (TaskCanceledException)
+        if (userElement.TryGetProperty("id", out var idProp) || userElement.TryGetProperty("Id", out idProp))
+            userId = idProp.GetInt32();
+
+        if (userElement.TryGetProperty("username", out var usernameProp) || userElement.TryGetProperty("Username", out usernameProp))
+            returnedUsername = usernameProp.GetString() ?? "";
+
+        if (userId <= 0 || string.IsNullOrEmpty(returnedUsername))
         {
-            await DisplayAlert("Error", "Request timed out. Please make sure the backend is running.", "OK");
+            await DisplayAlert("Login Failed", "Invalid user data returned from server.", "OK");
+            return;
         }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Error", $"Could not connect to server: {ex.Message}", "OK");
-        }
+
+        // ✅ Save to preferences
+        Preferences.Set("UserId", userId);
+        Preferences.Set("Username", returnedUsername);
+
+        await DisplayAlert("Success", "Login successful!", "OK");
+        await Navigation.PushAsync(new MainPage());
     }
+    catch (Exception ex)
+    {
+        await DisplayAlert("Error", $"Cannot connect to server: {ex.Message}", "OK");
+    }
+}
+
 
     private async void OnGoToSignUpClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new SignUpPage());
     }
 }
-
